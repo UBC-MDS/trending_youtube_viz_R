@@ -4,6 +4,14 @@ Authors: Daniel Cairns, Natalie Cho, Lauren Zung
 
 ## Dashboard Features
 
+**Category Boxplots**
+
+**Top Channels Bar Chart**
+
+**Popular Tags Bubble Chart**
+
+**Publishing Date Circular Bar Chart**
+
 
 ## App Sketch
 
