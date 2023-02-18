@@ -8,13 +8,18 @@ Lauren Zung, Daniel Cairns, Natalie Cho
 
 *Target audience*: YouTube content creators and enthusiasts
 
-Why and how videos go viral on YouTube can seem random and unpredictable. For the growing number of content creators on the platform, understanding what makes a trending video is incredibly valuable. To support these creators, we propose to build a dashboard which highlights key information about trending YouTube videos over time. We hope this app can help users improve their content so it results in more trending videos more often.
+Why and how videos go viral on YouTube can seem random and unpredictable. For the growing number of content creators on the platform, understanding what makes a trending video is incredibly valuable. To support these creators, we propose to build a dashboard which highlights key information about trending YouTube videos over time. The social media video sharing platform combines multiple factors in their assessment of the top trending videos each calendar year; they are not just ranking videos based on their total number of views. By analyzing these metrics, creators can better understand trends within their category group(s) and strategically plan how to market and direct their channel accordingly to produce more trending videos.
 
 ## 2. Description of the Data
 
-Of the videos that are posted to Youtube, each day Youtube places the most popular videos into its "trending" category. The dataset we will be visualizing is composed of approximately 40880 trending Youtube videos in Canada, with trending dates spanning from December 2017 to May 2018. Along with the trending date and title of each video (`trending_date, title`), each trending Youtube video has data on the title of the channel that uploaded the video (`channel_title`), category of video (`category_id`), time of day it was published (`publish_time`), tags used (`tags`), common user interaction statistics (`views`, `likes`, `dislikes`, `comment_count`), whether the video got removed (`video_error_or_removed`), the video description (`description`) and other upload options (`comments_disabled`, `ratings_disabled`).
+Of the videos that are posted to Youtube, each day Youtube places the most popular videos into its "trending" category. The dataset we will be visualizing is composed of approximately 83400 trending Youtube videos in Canada, with trending dates spanning from August 2020 to November 2021. There are 200 video entries for each calendar date. YouTube [removed the dislike feature](https://github.com/UBC-MDS/trending_youtube_viz_R/pull/5#:~:text=https%3A//variety.com/2022/digital/news/youtube%2Dceo%2Ddefends%2Dhide%2Ddislikes%2D1235162153/) on videos on November 10th 2021, therefore we have only included dates where this information is captured for consistency purposes. Along with the trending date and title of each video (`trending_date, title`), each trending Youtube video has data on the title of the channel that uploaded the video (`channelTitle`), category of video (`categoryId`), time of day it was published (`publishedAt`), tags used (`taglist`), common user interaction statistics (`view_count`, `likes`, `dislikes`, `comment_count`) and other upload options (`comments_disabled`, `ratings_disabled`).
 
 ## 3. Research Questions Being Explored
+
+Our project answers the primary research questions:
+- What are common themes across trending Youtube videos from each category?
+- What were the top channels with the most trending Youtube videos between two dates?
+- What are popular tags/upload times for trending Youtube videos?
 
 Larry is a full-time content creator on YouTube. He has had success with some of his videos, but others perform poorly and he's not sure why. To avoid another disappointment, while planning his next video, he visits our "trending youtube videos dashboard" to see what he can learn from recent trending videos on the platform. Specifically, Larry can...
 
