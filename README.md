@@ -9,15 +9,19 @@ This dashboard is designed to deliver insights to YouTube content creators on th
 The landing page gives users the ability to customize their viewing experience by adjusting the timeframe of interest using calendar widgets. This will adjust all charts on the web app to only illustrate data from videos that were trending between the chosen date settings. The four key visualizations are as follows:
 
 **Category Boxplots**
-Users can select via dropdown menu whether to plot the distribution of likes, comment or views across video categories. This provides an overview of different measures of popularity (including the median and interquartile range) for each grouping.
+
+Users can select via dropdown menu whether to plot the distribution of likes, comment or views across video categories. This provides an overview of different measures of popularity (including the median and interquartile range) for each group.
 
 **Top Channels Bar Chart**
+
 Creators may wish to see who the trendsetters were during a time period. A bar chart can capture the number of trending videos published by each top creator (by category, selected via menu), thus allowing users to determine where they stand in the lineup and/or find new sources of inspiration for their channel.
 
 **Popular Tags Bubble Chart**
+
 Dashboard visitors can observe common words and phrases in tag lists from numerous trending videos. A checklist menu will permit viewers to view tags from multiple categories so that they may integrate terms that are popular across communities to improve overall reach. To enhance data visibility, users can mouse over the bubbles to view a tooltip displaying the frequency of each tag by category.
 
 **Publishing Date Circular Bar Chart**
+
 A dropdown menu will provide options to customize the display to organize results by time of day, day of the week, or month of the year to highlight popular upload days/times on YouTube. This will enable users to make informed decisions about when to post to best increase their chances of having a viral video.
 
 
