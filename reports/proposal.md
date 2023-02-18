@@ -25,3 +25,5 @@ Larry is a full-time content creator on YouTube. He has had success with some of
 3.  [Visualize] at a glance which tags are popular in trending videos so he can add them to his own videos.
 
 4.  [Identify] channels that produce a large number of trending videos. Suppose Larry visits the top 5 most popular channels and notices they share a particular layout or color scheme, he could choose to update his branding to follow these successful channels.
+
+5.  [Decide] what time of the day and/or day of the week he should publish his videos. Larry can, for example, look at the publish times of trending videos in the music category. If most of the trending videos tend to be published in the evening, he can schedule his next uploads to follow suit.
