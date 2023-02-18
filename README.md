@@ -4,7 +4,7 @@ Authors: Daniel Cairns, Natalie Cho, Lauren Zung
 
 ## Dashboard Features
 
-This dashboard is designed to deliver insights to YouTube content creators on the top daily trending videos hosted by the platform. The visualization tool captures user interactions (likes, views, comments), publishing and trending dates, tag lists and more across tens of thousands of videos, with aims to have users interpolate their own understandings of YouTube's data using an effortless and engaging online interface.
+This dashboard is designed to deliver insights to YouTube content creators and enthusiasts on the top daily trending videos hosted by the platform. The visualization tool captures user interactions (likes, views, comments), publishing and trending dates, tag lists and more across tens of thousands of videos, with aims to have users interpolate their own understandings of YouTube's data using an effortless and engaging online interface.
 
 The landing page gives users the ability to customize their viewing experience by adjusting the timeframe of interest using calendar widgets. This will adjust all charts on the web app to only illustrate data from videos that were trending between the chosen date settings. The four key visualizations are as follows:
 
