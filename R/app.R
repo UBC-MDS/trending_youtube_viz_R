@@ -1,52 +1,81 @@
 library(shiny)
+library(bslib)
+library(ggplot2)
+library(tidyverse)
+library(forcats)
+library(plotly)
+library(thematic)
+library(scales)
+library(rlang)
 
-ui <- fluidPage(
-  # Select List Input Control
-  selectInput("variable", "Variable:",
-              c("Name1" = "dataset_column_name1",
-                "Name2" = "dataset_column_name2",
-                "Name3" = "dataset_column_name3")),
-  tableOutput("data"),
-  
-  # Date Selector
-  dateInput("date", label = h3("Date input"), value = "2014-01-01"),
-  hr(),
-  fluidRow(column(3, verbatimTextOutput("value"))),
-  
-  # Checkbox Group Input Control
-  checkboxGroupInput("variable", "Variables to show:",
-                     c("Name1" = "dataset_column_name1",
-                       "Name2" = "dataset_column_name2",
-                       "Name3" = "dataset_column_name3")),
-  tableOutput("data"),
-  
-  # Circle packer
-  # Couldnt find a template, might need to make from scratch
-  
-  # Polar coordinates
-  # Couldnt find a template, might need to make from scratch
+data <- read.csv('../data/processed/CA_youtube_trending_data_processed.csv')
+
+ui <- navbarPage('YouTube Trend Visualizer',
+                 theme = bs_theme(bootswatch = "lux"),
+                 sidebarLayout(
+                   sidebarPanel(
+                     dateRangeInput(inputId = 'daterange',
+                                    label = 'Trending Date Range:',
+                                    start = min(data$trending_date),
+                                    end = max(data$trending_date),
+                                    format = 'yyyy-mm-dd')
+                              ),
+                   mainPanel(
+                     fluidRow(
+                       column(6, align="center",
+                              "Category Boxplots"),
+                       column(6,
+                              selectInput(inputId = 'barplotdist',
+                                          label = 'Distribution Metric:',
+                                          choices = c("Comments (in thousands)" = "comment_count",
+                                                      "Dislikes (in thousands)" = "dislikes",
+                                                      "Likes (in thousands)" = "likes",
+                                                      "Views (in millions)" = "view_count"),
+                                          selected = 'Comments (in thousands)'))
+                       ),
+                       fluidRow(
+                         plotlyOutput(
+                           outputId = 'barplot',
+                           width = '500px',
+                           height = '500px')
+                         )
+                     )
+                   )
 )
 
 server <- function(input, output, session) {
-  # Select List Input Control
-  output$data <- renderTable({
-    dataset[, c("dataset_column_name1", input$variable), drop = FALSE]
-  }, rownames = TRUE)
   
-  # Date Selector
-  output$value <- renderPrint({ input$date })
-  
-  # Checkbox Group Input Control
-  output$txt <- renderText({
-    icons <- paste(input$icons, collapse = ", ")
-    paste("You chose", icons)
+  scaleInput <- reactive({
+    if (input$barplotdist == "view_count") return(1e-6)
+    else return(1e-4)
   })
   
-  # Circle packer
-  # Couldnt find a template, might need to make from scratch
+  suffixInput <- reactive({
+    if (input$barplotdist == "view_count") return("M")
+    else return("K")
+  })
   
-  # Polar coordinates
-  # Couldnt find a template, might need to make from scratch
+  # Category Barplot
+  output$barplot <- plotly::renderPlotly({
+    
+    thematic::thematic_shiny()
+    
+    plotly::ggplotly(
+      data |>
+        dplyr::filter(trending_date > input$daterange[1] & trending_date < input$daterange[2]) |>
+        dplyr::arrange(trending_date) |>
+        dplyr::distinct(video_id, .keep_all = TRUE) |> # keep most recent data for accurate tracking?
+        ggplot2::ggplot() +
+        ggplot2::geom_boxplot(
+          aes(x = categoryId,
+              y = !!rlang::sym(input$barplotdist),
+              fill = categoryId)
+        ) +
+        ggplot2::scale_y_continuous(labels = label_number(suffix = suffixInput(), scale = scaleInput())) +
+        ggplot2::guides(fill = FALSE) +
+        ggplot2::coord_flip()
+    )
+  })
   
 }
 
