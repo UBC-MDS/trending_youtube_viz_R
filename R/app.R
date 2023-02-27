@@ -1,30 +1,15 @@
 library(shiny)
 
-ui <- fluidPage(
-  # Select List Input Control
-  selectInput("variable", "Variable:",
-              c("Name1" = "dataset_column_name1",
-                "Name2" = "dataset_column_name2",
-                "Name3" = "dataset_column_name3")),
-  tableOutput("data"),
-  
-  # Date Selector
-  dateInput("date", label = h3("Date input"), value = "2014-01-01"),
-  hr(),
-  fluidRow(column(3, verbatimTextOutput("value"))),
-  
-  # Checkbox Group Input Control
-  checkboxGroupInput("variable", "Variables to show:",
-                     c("Name1" = "dataset_column_name1",
-                       "Name2" = "dataset_column_name2",
-                       "Name3" = "dataset_column_name3")),
-  tableOutput("data"),
-  
-  # Circle packer
-  # Couldnt find a template, might need to make from scratch
-  
-  # Polar coordinates
-  # Couldnt find a template, might need to make from scratch
+ui <- navbarPage('YouTube Trend Visualizer',
+                 theme = bs_theme(bootswatch = "lux"),
+                 sidebarLayout(
+                   sidebarPanel(
+                     dateRangeInput(inputId = 'daterange',
+                                    label = 'Trending Date Range:',
+                                    start = min(data$trending_date),
+                                    end = max(data$trending_date),
+                                    format = 'yyyy-mm-dd'))
+                   )
 )
 
 server <- function(input, output, session) {
