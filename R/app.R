@@ -1,4 +1,12 @@
 library(shiny)
+library(bslib)
+library(ggplot2)
+library(tidyverse)
+library(forcats)
+library(plotly)
+library(thematic)
+library(scales)
+library(rlang)
 
 ui <- navbarPage('YouTube Trend Visualizer',
                  theme = bs_theme(bootswatch = "lux"),
