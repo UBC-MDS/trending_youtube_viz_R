@@ -21,6 +21,25 @@ ui <- navbarPage('YouTube Trend Visualizer',
 )
 
 server <- function(input, output, session) {
+  # Select List Input Control
+  output$data <- renderTable({
+    dataset[, c("dataset_column_name1", input$variable), drop = FALSE]
+  }, rownames = TRUE)
+  
+  # Date Selector
+  output$value <- renderPrint({ input$date })
+  
+  # Checkbox Group Input Control
+  output$txt <- renderText({
+    icons <- paste(input$icons, collapse = ", ")
+    paste("You chose", icons)
+  })
+  
+  # Circle packer
+  # Couldnt find a template, might need to make from scratch
+  
+  # Polar coordinates
+  # Couldnt find a template, might need to make from scratch
   
 }
 
