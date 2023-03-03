@@ -351,7 +351,7 @@ server <- function(input, output, session) {
       ggplot2::geom_polygon(aes(group = id, fill = id), 
                             colour = "black", show.legend = FALSE) +
       ggplot2::geom_text(data = packing,
-                         aes(x, y, text = paste("Tag: ", bubble_labels, "\nNumber of Videos: ", counts)),
+                         aes(x, y, text = paste("Tag: ", filtered_tag_counts$tag[1:input$num_tags], "\nNumber of Videos: ", counts)),
                          label = bubble_labels, size = 3, color = "white") +
       ggplot2::scale_fill_viridis_c() +
       ggplot2::theme(
