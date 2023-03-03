@@ -1,6 +1,7 @@
 library(shiny)
 library(bslib)
 library(shinyWidgets)
+library(shinydashboard)
 library(ggplot2)
 library(tidyverse)
 library(forcats)
@@ -14,11 +15,13 @@ library(thematic)
 library(sysfonts)
 library(packcircles)
 library(lubridate)
+library(rsconnect)
+
 
 options(shiny.autoreload = TRUE)
 options(max.print = 25)
 
-data <- read.csv('../data/processed/CA_youtube_trending_data_processed.csv')
+data <- read.csv(url("https://raw.githubusercontent.com/UBC-MDS/trending_youtube_viz_R/main/data/processed/CA_youtube_trending_data_processed.csv"))
 
 boxplot_options <- c(
   "Comments" = "comment_count",
@@ -78,11 +81,13 @@ ui <- fluidPage(theme = light_theme,
         width = 2,
         dateRangeInput(
           inputId = "daterange",
-          label = "Trending Date Range:",
+          label = span("Trending Date Range:", style = 'font-size: 20px'),
           start = min(data$trending_date),
           end = max(data$trending_date),
           format = "yyyy-mm-dd"
         ),
+        shinydashboard::valueBoxOutput("video_count_box", width = "100%"),
+        shinydashboard::valueBoxOutput("channel_count_box", width = "100%"),
         shinyWidgets::materialSwitch(
           inputId = "toggle_theme",
           label = span(icon("moon"), "Dark Mode"),
@@ -98,10 +103,10 @@ ui <- fluidPage(theme = light_theme,
             full_screen = TRUE,
             card_header(
               class = "bg-dark",
-              span(icon("arrow-trend-up"), "Category Boxplots")),
+              span(icon("arrow-trend-up"), "Distribution Boxplots", style = 'font-size: 20px')),
             card_body_fill(
               fluidRow(
-                column(5,
+                column(6,
                   selectInput(
                     inputId = "boxplotdist",
                     label = "Distribution Metric:",
@@ -109,7 +114,7 @@ ui <- fluidPage(theme = light_theme,
                     selected = "Comments"
                   )
                 ),
-                column(5,
+                column(6,
                   shinyWidgets::materialSwitch(
                     inputId = "rm_outliers",
                     label = "Exclude Outliers (> 0.9 Quantile)",
@@ -124,7 +129,7 @@ ui <- fluidPage(theme = light_theme,
             full_screen = TRUE,
             card_header(
               class = "bg-dark",
-              span(icon("users"), "Channel Barplot")),
+              span(icon("users"), "Trending Videos by Channel", style = 'font-size: 20px')),
             card_body_fill(
               selectInput(
                 inputId = "barplotcat",
@@ -139,19 +144,30 @@ ui <- fluidPage(theme = light_theme,
             full_screen = TRUE,
             card_header(
               class="bg-dark",
-              span(icon("hashtag"), "Common Tags by Category")),
+              span(icon("hashtag"), "Common Tags by Category", style = 'font-size: 20px')),
             card_body_fill(
-              pickerInput(
-                inputId = "bubbleCats", 
-                label = "Category", 
-                choices = sort(unique(data$categoryId)), 
-                selected = unique(data$categoryId),
-                multiple = TRUE,
-                options = pickerOptions(
-                  actionsBox = TRUE,
-                  countSelectedText = "{0} categories",
-                  selectedTextFormat = "count > 2",
-                  width = 'fit')
+              fluidRow(
+                column(6,
+                  shinyWidgets::pickerInput(
+                    inputId = "bubbleCats", 
+                    label = "Category:", 
+                    choices = sort(unique(data$categoryId)), 
+                    selected = unique(data$categoryId),
+                    multiple = TRUE,
+                    options = shinyWidgets::pickerOptions(
+                      actionsBox = TRUE,
+                      countSelectedText = "{0} categories",
+                      selectedTextFormat = "count > 2",
+                      width = 'fit')
+                  )
+                ),
+                column(6,
+                  sliderInput(
+                    inputId = "num_tags",
+                    label = "Number of Tags:",
+                    min = 1, max = 50, value = 30
+                  )
+                )
               ),
               plotlyOutput('bubble')
             )
@@ -160,10 +176,10 @@ ui <- fluidPage(theme = light_theme,
             full_screen = TRUE,
             card_header(
               class="bg-dark",
-              span(icon("hashtag"), "Publishing Time")),
+              span(icon("clock"), "Popular Publishing Times", style = 'font-size: 20px')),
             card_body_fill(
               fluidRow(
-                column(5,
+                column(6,
                        selectInput(
                          inputId = "representation_format",
                          label = "Format:",
@@ -171,7 +187,7 @@ ui <- fluidPage(theme = light_theme,
                          selected = "Day of Week"
                        )
                 ),
-                column(5,
+                column(6,
                        selectInput(
                          inputId = "vid_category",
                          label = "Category:",
@@ -180,7 +196,7 @@ ui <- fluidPage(theme = light_theme,
                        )
                 )
               ),
-              plotlyOutput('polar_coor')
+              plotOutput('polar_coor', width = "100%")
             )
           )
         )
@@ -216,6 +232,22 @@ server <- function(input, output, session) {
     return(data)
   })
   
+  # Video Counter
+  output$video_count_box <- renderValueBox({
+    shinydashboard::valueBox(
+      span(icon("video"), length(unique(data_by_date()$video_id))),
+      subtitle = "Total Video Count"
+    )
+  })
+  
+  # Channel Counter
+  output$channel_count_box <- renderValueBox({
+    shinydashboard::valueBox(
+      span(icon("user"), length(unique(data_by_date()$channelId))),
+      subtitle = "Total Channel Count"
+    )
+  })
+  
   # Filter out outliers if toggled
   boxplot_data <- reactive({
     if (isTRUE(input$rm_outliers)) {
@@ -232,7 +264,7 @@ server <- function(input, output, session) {
     #Create plot
     box_plot <- boxplot_data() |>
       dplyr::arrange(trending_date) |>
-      dplyr::distinct(video_id, .keep_all = TRUE) |> # keep most recent data for accurate tracking?
+      dplyr::distinct(video_id, .keep_all = TRUE) |> # keep most recent data point for accurate tracking (no aggregating the same video)
       ggplot2::ggplot() +
       ggplot2::geom_boxplot(
         aes(
@@ -242,12 +274,14 @@ server <- function(input, output, session) {
         )
       ) +
       ggplot2::labs(
-        x = names(boxplot_options[which(boxplot_options == input$boxplotdist)]),
-        y = 'Category',
+        y = names(boxplot_options[which(boxplot_options == input$boxplotdist)]),
+        x = 'Category',
       ) +
       ggplot2::scale_y_continuous(labels = scales::label_number(scale_cut = cut_short_scale()), breaks = scales::breaks_pretty(n = 5)) +
       ggplot2::scale_fill_manual(values = boxplot_colours) + 
       ggplot2::guides(fill = FALSE) +
+      ggplot2::theme(axis.title.x = element_text(size = 14, face = "bold"),
+                     axis.title.y = element_text(size = 14, face = "bold")) +
       ggplot2::coord_flip()
     
     # Display the plot
@@ -268,7 +302,8 @@ server <- function(input, output, session) {
         aes(
           x = video_count,
           y = reorder(channelTitle, video_count),
-          text = paste("Count: ", video_count)
+          text = paste(
+            "Count: ", video_count)
         )
       ) +
       ggplot2::geom_bar(
@@ -276,11 +311,14 @@ server <- function(input, output, session) {
         fill = names(barplot_colours[which(barplot_colours == input$barplotcat)])) +
       ggplot2::labs(
         x = 'Count of Videos',
-        y = 'Channel Title'
+        y = 'Channel Name'
       ) +
       ggplot2::scale_y_discrete(labels = function(x) {
         stringr::str_wrap(x, width = 20)
-      })
+      }) +
+      ggplot2::theme(axis.title.x = element_text(size = 14, face = "bold"),
+                     axis.title.y = element_text(size = 14, face = "bold"))
+      
     
     # Display the plot
     plotly::ggplotly(bar_plot, tooltip = "text")
@@ -301,22 +339,21 @@ server <- function(input, output, session) {
       as.data.frame() |>
       subset(tag != "[none]")
     
-    # Parameter to tinker with.. how many circles to display
-    n_circles <- 30
-    
     # Functions to "pack" the circles in a nice layout
-    packing <- packcircles::circleProgressiveLayout(filtered_tag_counts$Freq[1:n_circles])
+    packing <- packcircles::circleProgressiveLayout(filtered_tag_counts$Freq[1:input$num_tags])
     packing$radius <- 0.95*packing$radius
-    packing$counts <- filtered_tag_counts$Freq[1:n_circles]
+    packing$counts <- filtered_tag_counts$Freq[1:input$num_tags]
     bubbleplot_data <- packcircles::circleLayoutVertices(packing)
-    bubble_labels <- stringr::str_wrap(filtered_tag_counts$tag[1:n_circles], 10)
+    bubble_labels <- stringr::str_wrap(filtered_tag_counts$tag[1:input$num_tags], 10)
     
     # Create the plot
     bubble_plot <- ggplot2::ggplot(bubbleplot_data, aes(x, y, text = paste("Rank: ", id))) + 
       ggplot2::geom_polygon(aes(group = id, fill = id), 
                             colour = "black", show.legend = FALSE) +
-      ggplot2::geom_text(data = packing, aes(x, y, text = paste("Number of Videos: ", counts)), label = bubble_labels) +
-      ggplot2::scale_fill_distiller(palette = "Spectral") +
+      ggplot2::geom_text(data = packing,
+                         aes(x, y, text = paste("Tag: ", bubble_labels, "\nNumber of Videos: ", counts)),
+                         label = bubble_labels, size = 3, color = "white") +
+      ggplot2::scale_fill_viridis_c() +
       ggplot2::theme(
         axis.title = element_blank(),
         axis.text = element_blank(),
@@ -328,33 +365,36 @@ server <- function(input, output, session) {
   })
   
   # Polar Coordinates
+  # There is currently an open issue regarding the integration of coord_polar in plotly
+  # (https://github.com/plotly/plotly.R/issues/878)
   output$polar_coor <- renderPlot({
     data_filtered <- data_by_date() |>
       # Filtering dataset by category
       dplyr::filter(categoryId == input$vid_category) |>
       # Creating new columns for date components
-      dplyr::mutate("publishedAt" = lubridate::ymd_hms(publishedAt)) |>
-      dplyr::mutate("publish_date" = lubridate::date(publishedAt),
-                    "publish_month" = lubridate::month(publishedAt, label = TRUE),
-                    "publish_wday" = lubridate::wday(publishedAt, label = TRUE),
-                    "publish_hour" = lubridate::hour(publishedAt))
+      dplyr::mutate(publishedAt = lubridate::ymd_hms(publishedAt)) |>
+      dplyr::mutate(publish_date = lubridate::date(publishedAt),
+                    publish_month = lubridate::month(publishedAt, label = TRUE),
+                    publish_wday = lubridate::wday(publishedAt, label = TRUE),
+                    publish_hour = lubridate::hour(publishedAt)) |>
+      dplyr::group_by(!!rlang::sym(input$representation_format)) |>
+      dplyr::summarise(video_count = length(unique(video_id)))
     
     # Render plot
-    chart <- ggplot2::ggplot(data_filtered,
-      aes(x = .data[[input$representation_format]], fill = after_stat(count))) + 
-      ggplot2::stat_count(show.legend = TRUE) +
+    ggplot2::ggplot(data_filtered,
+      aes(x = .data[[input$representation_format]], y = video_count, fill = video_count)) +
+      ggplot2::geom_bar(stat = "identity") +
       ggplot2::xlab(names(interval_choices[which(interval_choices == input$representation_format)])) +
-      ggplot2::scale_fill_continuous(name = "Number of Videos")
-    
-    pol_coor <- chart + 
+      ggplot2::scale_fill_distiller(palette = "YlGnBu", direction = 1, name = "Number of Videos") +
       ggplot2::coord_polar() +
-      ggplot2::theme(axis.title.y = element_blank(),
+      ggplot2::theme(axis.title.x = element_text(size = 22, face = "bold"),
+                     axis.text.x = element_text(size = 26),
+                     axis.title.y = element_blank(),
                      axis.ticks.y = element_blank(),
-                     axis.text.y = element_blank()
-      )
-    
-    # Display the plot
-    plotly::ggplotly(pol_coor, tooltip = "text")
+                     axis.text.y = element_blank(),
+                     legend.text = element_text(size = 18),
+                     legend.title = element_text(size = 20, face = "bold"),
+                     legend.box.margin = margin(12, 12, 12, 12))
   })
 }
 
