@@ -77,6 +77,7 @@ install.packages(c("shiny", "bslib", "shinyWidgets", "shinydashboard", "ggplot2"
 - Implement polar coordinate graph in ggplotly instead of ggplot2 for a more seamless dashboard integration
 - Add a tooltip for polar coordinate graph to show count of videos per segment
 - Distinguish between tooltip functionality for bubble graph
+- Colour-code bubbles in bubble graph by category
 
 ## License
 
