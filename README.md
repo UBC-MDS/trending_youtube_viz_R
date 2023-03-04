@@ -59,7 +59,7 @@ If you would like to contribute to our project, please read the CONTRIBUTING.md 
 - Fork our repository and clone it onto your computer
 - Create a new branch (named according to the specifications in the CONTRIBUTING.md file)
 
-*To run the app locally*
+*To run the app locally:*
 - Open the project (i.e., the app.R file) in Rstudio 
 - Ensure all the necessary packages are installed
 ```
@@ -67,7 +67,7 @@ install.packages(c("shiny", "bslib", "shinyWidgets", "shinydashboard", "ggplot2"
 ```
 - Click "Run App"
 
-*To propose new changes*
+*To propose new changes:*
 - Make your changes to the code in Rstudio
 - Commit your changes (with an informative commit message)
 - Push your changes to your fork
