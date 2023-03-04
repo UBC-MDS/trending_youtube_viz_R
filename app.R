@@ -3,7 +3,6 @@ library(bslib)
 library(shinyWidgets)
 library(shinydashboard)
 library(ggplot2)
-library(tidyverse)
 library(forcats)
 library(plotly)
 library(thematic)
@@ -16,11 +15,10 @@ library(packcircles)
 library(lubridate)
 library(rsconnect)
 
-
 options(shiny.autoreload = TRUE)
 options(max.print = 25)
 
-data <- read.csv(url("https://raw.githubusercontent.com/UBC-MDS/trending_youtube_viz_R/main/data/processed/CA_youtube_trending_data_processed.csv"))
+data <- read.csv("data/processed/CA_youtube_trending_data_processed.csv")
 
 boxplot_options <- c(
   "Comments" = "comment_count",
