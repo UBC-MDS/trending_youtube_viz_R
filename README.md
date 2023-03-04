@@ -63,7 +63,7 @@ If you would like to contribute to our project, please read the CONTRIBUTING.md 
 - Open the project (i.e., the app.R file) in Rstudio 
 - Ensure all the necessary packages are installed
 ```
-install.packages(c("shiny", "bslib", "shinyWidgets", "shinydashboard", "ggplot2", "tidyverse", "forcats", "plotly", "thematic", "scales", "rlang", "stringr", "showtext", "sysfonts", "packcircles", "lubridate", "rsconnect"))
+install.packages(c("shiny", "bslib", "shinyWidgets", "shinydashboard", "ggplot2", "forcats", "plotly", "thematic", "scales", "rlang", "stringr", "showtext", "sysfonts", "packcircles", "lubridate", "rsconnect"))
 ```
 - Click "Run App"
 
