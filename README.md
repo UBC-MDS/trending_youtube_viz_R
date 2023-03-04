@@ -8,6 +8,7 @@ Thanks for visiting our repository for our dashboard! This document (README.md) 
 * [Project Motivation](#project-motivation)
 * [Dashboard Breakdown](#dashboard-features)
 * [Dashboard Sketch](#dashboard-sketch)
+* [Live Dashboard](#live-dashboard)
 * [Dataset Used](#dataset-used)
 * [Getting Involved](#get-involved)
 
@@ -44,6 +45,10 @@ Please click on the link below to access the sketch on Figma. More detailed mock
 [Figma Prototype](https://www.figma.com/proto/33iTnABTUz3DOoFkYiHiHU/Dashboard?node-id=1%3A2&scaling=scale-down&page-id=0%3A1&starting-point-node-id=1%3A2)
 
 ![Mockup](img/mockup.png)
+
+## Live Dashboard
+
+See our dashboard live on shinyapps.io [here](https://lzung.shinyapps.io/youtube-trend-visualizer/)!
 
 ## Dataset Used
 
