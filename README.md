@@ -1,4 +1,5 @@
 # 📹 Youtube Trend Analytics
+![GIF](img/shiny_dashboard.gif)
 
 Authors: Daniel Cairns, Natalie Cho, Lauren Zung
 
