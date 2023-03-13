@@ -1,6 +1,21 @@
 # 📹 Youtube Trend Analytics
+![GIF](img/shiny_dashboard.gif)
 
 Authors: Daniel Cairns, Natalie Cho, Lauren Zung
+
+## Welcome!
+Thanks for visiting our repository for our dashboard! This document (README.md) will have all the general information you need to know about our project. You can either scroll down or click from the links below to jump to a specific section:
+
+* [Project Motivation](#project-motivation)
+* [Dashboard Breakdown](#dashboard-features)
+* [Dashboard Sketch](#dashboard-sketch)
+* [Live Dashboard](#live-dashboard)
+* [Dataset Used](#dataset-used)
+* [Getting Involved](#get-involved)
+
+## Project Motivation
+
+Why and how videos go viral on YouTube can seem random and unpredictable. For the growing number of content creators on the platform, understanding what makes a trending video is incredibly valuable. To support these creators, we propose to build a dashboard which highlights key information about trending YouTube videos over time. The social media video sharing platform combines multiple factors in their assessment of the top trending videos each calendar year; they are not just ranking videos based on their total number of views. By analyzing these metrics, creators can better understand trends within their category group(s) and strategically plan how to market and direct their channel accordingly to produce more trending videos.
 
 ## Dashboard Features
 
@@ -24,8 +39,7 @@ Dashboard visitors can observe common words and phrases in tag lists from numero
 
 A dropdown menu will provide options to customize the display to organize results by time of day, day of the week, or month of the year to highlight popular upload days/times on YouTube. This will enable users to make informed decisions about when to post to best increase their chances of having a viral video.
 
-
-## App Sketch
+## Dashboard Sketch
 
 Please click on the link below to access the sketch on Figma. More detailed mockups of the intended features are included in the image below.
 
@@ -33,10 +47,43 @@ Please click on the link below to access the sketch on Figma. More detailed mock
 
 ![Mockup](img/mockup.png)
 
-## Dataset
+## Live Dashboard
+
+See our dashboard live on shinyapps.io [here](https://lzung.shinyapps.io/youtube-trend-visualizer/)!
+
+## Dataset Used
 
 Youtube. (2023). <i>YouTube Trending Video Dataset (updated daily)</i> [Data set]. Kaggle. https://doi.org/10.34740/KAGGLE/DSV/5003820
 Note: As we are based in Canada, we are using data extracted from videos that were trending in Canada due to file size limitations and for ease of loading/extraction. However, given the flexibility of our web app, it can be easily extended to YouTube data from other countries.
+
+## Get involved
+
+**How to run the app locally and make contributions**
+
+If you would like to contribute to our project, please read the CONTRIBUTING.md file and then follow these steps:
+- Ensure that you have R and Rstudio installed on your computer
+- Fork our repository and clone it onto your computer
+- Create a new branch (named according to the specifications in the CONTRIBUTING.md file)
+
+*To run the app locally:*
+- Open the project (i.e., the app.R file) in Rstudio 
+- Ensure all the necessary packages are installed
+```
+install.packages(c("shiny", "bslib", "shinyWidgets", "shinydashboard", "ggplot2", "forcats", "plotly", "thematic", "scales", "rlang", "stringr", "showtext", "sysfonts", "packcircles", "lubridate", "rsconnect"))
+```
+- Click "Run App"
+
+*To propose new changes:*
+- Make your changes to the code in Rstudio
+- Commit your changes (with an informative commit message)
+- Push your changes to your fork
+- Submit a pull request 
+
+**Places for improvement**
+- Implement polar coordinate graph in ggplotly instead of ggplot2 for a more seamless dashboard integration
+- Add a tooltip for polar coordinate graph to show count of videos per segment
+- Distinguish between tooltip functionality for bubble graph
+- Colour-code bubbles in bubble graph by category
 
 ## License
 
