@@ -2,6 +2,7 @@ library(shiny)
 library(bslib)
 library(shinyWidgets)
 library(shinydashboard)
+library(shinycssloaders)
 library(ggplot2)
 library(forcats)
 library(plotly)
@@ -80,7 +81,9 @@ ui <- fluidPage(theme = light_theme,
           inputId = "daterange",
           label = span("Trending Date Range:", style = 'font-size: 20px'),
           start = min(data$trending_date),
-          end = max(data$trending_date),
+          end = "2020-08-19",
+          min = min(data$trending_date),
+          max = max(data$trending_date),
           format = "yyyy-mm-dd"
         ),
         shinydashboard::valueBoxOutput("video_count_box", width = "100%"),
@@ -90,7 +93,7 @@ ui <- fluidPage(theme = light_theme,
           label = span(icon("moon"), "Dark Mode"),
           value = FALSE,
           status = "info"
-        ),
+        )
       ),
       mainPanel(
         width = 10,
@@ -119,7 +122,7 @@ ui <- fluidPage(theme = light_theme,
                   )
                 )
               ),
-              plotlyOutput(outputId = "boxplot")
+              shinycssloaders::withSpinner(plotlyOutput(outputId = "boxplot"))
             )
           ),
           card(
@@ -134,7 +137,7 @@ ui <- fluidPage(theme = light_theme,
                 choices = unique(data$categoryId),
                 selected = "Music"
               ),
-              plotlyOutput(outputId = "barplot")
+              shinycssloaders::withSpinner(plotlyOutput(outputId = "barplot"))
             )
           ),
           card(
@@ -166,7 +169,7 @@ ui <- fluidPage(theme = light_theme,
                   )
                 )
               ),
-              plotlyOutput('bubble')
+              shinycssloaders::withSpinner(plotlyOutput('bubble'))
             )
           ),
           card(
@@ -193,7 +196,7 @@ ui <- fluidPage(theme = light_theme,
                        )
                 )
               ),
-              plotOutput('polar_coor', width = "100%")
+              shinycssloaders::withSpinner(plotOutput('polar_coor', width = "100%"))
             )
           )
         )
@@ -205,7 +208,7 @@ ui <- fluidPage(theme = light_theme,
         hr(),
         column(4, p()),
         column(4, p()),
-        column(4, p()),
+        column(4, p())
       ),
       p("2023 © D. Cairns, N. Cho, L. Zung")
     )
@@ -225,7 +228,8 @@ server <- function(input, output, session) {
   # Filter data by date universally
   data_by_date <- reactive({
     data <- data |>
-      dplyr::filter(trending_date > input$daterange[1] & trending_date < input$daterange[2])
+      dplyr::select(-title, -comments_disabled, -ratings_disabled) |>
+      dplyr::filter(trending_date >= input$daterange[1] & trending_date <= input$daterange[2])
     return(data)
   })
   
@@ -272,7 +276,7 @@ server <- function(input, output, session) {
       ) +
       ggplot2::labs(
         y = names(boxplot_options[which(boxplot_options == input$boxplotdist)]),
-        x = 'Category',
+        x = 'Category'
       ) +
       ggplot2::scale_y_continuous(labels = scales::label_number(scale_cut = cut_short_scale()), breaks = scales::breaks_pretty(n = 5)) +
       ggplot2::scale_fill_manual(values = boxplot_colours) + 
@@ -313,6 +317,7 @@ server <- function(input, output, session) {
       ggplot2::scale_y_discrete(labels = function(x) {
         stringr::str_wrap(x, width = 20)
       }) +
+      ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
       ggplot2::theme(axis.title.x = element_text(size = 14, face = "bold"),
                      axis.title.y = element_text(size = 14, face = "bold"))
       
