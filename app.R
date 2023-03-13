@@ -122,7 +122,7 @@ ui <- fluidPage(theme = light_theme,
                   )
                 )
               ),
-              shinycssloaders::withSpinner(plotlyOutput(outputId = "boxplot"))
+              shinycssloaders::withSpinner(plotlyOutput(outputId = "boxplot"), color="#D80808")
             )
           ),
           card(
@@ -137,7 +137,7 @@ ui <- fluidPage(theme = light_theme,
                 choices = unique(data$categoryId),
                 selected = "Music"
               ),
-              shinycssloaders::withSpinner(plotlyOutput(outputId = "barplot"))
+              shinycssloaders::withSpinner(plotlyOutput(outputId = "barplot"), color="#D80808")
             )
           ),
           card(
@@ -169,7 +169,7 @@ ui <- fluidPage(theme = light_theme,
                   )
                 )
               ),
-              shinycssloaders::withSpinner(plotlyOutput('bubble'))
+              shinycssloaders::withSpinner(plotlyOutput('bubble'), color="#D80808")
             )
           ),
           card(
@@ -196,7 +196,7 @@ ui <- fluidPage(theme = light_theme,
                        )
                 )
               ),
-              shinycssloaders::withSpinner(plotOutput('polar_coor', width = "100%"))
+              shinycssloaders::withSpinner(plotOutput('polar_coor', width = "100%"), color="#D80808")
             )
           )
         )
@@ -291,6 +291,11 @@ server <- function(input, output, session) {
 
   # Channel Barplot
   output$barplot <- plotly::renderPlotly({
+    # Check if data exists for the filter
+    validate(
+      need(input$barplotcat %in% data_by_date()$categoryId, "Category is not present in subset. Select a different category.")
+    )
+    
     # Create plot
     bar_plot <- data_by_date() |>
       dplyr::filter(categoryId == input$barplotcat) |>
@@ -328,6 +333,12 @@ server <- function(input, output, session) {
   
   # Bubble Tags Plot
   output$bubble <- plotly::renderPlotly({
+    # Check if data exists for the filter
+    validate(
+      need(input$bubbleCats != "", "Please select a category."),
+      need(data_by_date()$categoryId %in% input$bubbleCats, "Category is not present in subset. Select a different category.")
+    )
+    
     filtered_tag_counts <- data_by_date() |>
       # Filter date and categories
       dplyr::filter(categoryId %in% input$bubbleCats) |>
@@ -370,6 +381,11 @@ server <- function(input, output, session) {
   # There is currently an open issue regarding the integration of coord_polar in plotly
   # (https://github.com/plotly/plotly.R/issues/878)
   output$polar_coor <- renderPlot({
+    # Check if data exists for the filter
+    validate(
+      need(input$vid_category %in% data_by_date()$categoryId, "Category is not present in subset. Select a different category.")
+    )
+    
     data_filtered <- data_by_date() |>
       # Filtering dataset by category
       dplyr::filter(categoryId == input$vid_category) |>
