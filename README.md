@@ -1,4 +1,5 @@
 # 📹 Youtube Trend Analytics
+![GIF](img/shiny_dashboard.gif)
 
 Authors: Daniel Cairns, Natalie Cho, Lauren Zung
 
@@ -6,15 +7,19 @@ Authors: Daniel Cairns, Natalie Cho, Lauren Zung
 Thanks for visiting our repository for our dashboard! This document (README.md) will have all the general information you need to know about our project. You can either scroll down or click from the links below to jump to a specific section:
 
 * [Project Motivation](#project-motivation)
+* [Live Dashboard](#live-dashboard)
 * [Dashboard Breakdown](#dashboard-features)
 * [Dashboard Sketch](#dashboard-sketch)
-* [Live Dashboard](#live-dashboard)
 * [Dataset Used](#dataset-used)
 * [Getting Involved](#get-involved)
 
 ## Project Motivation
 
 Why and how videos go viral on YouTube can seem random and unpredictable. For the growing number of content creators on the platform, understanding what makes a trending video is incredibly valuable. To support these creators, we propose to build a dashboard which highlights key information about trending YouTube videos over time. The social media video sharing platform combines multiple factors in their assessment of the top trending videos each calendar year; they are not just ranking videos based on their total number of views. By analyzing these metrics, creators can better understand trends within their category group(s) and strategically plan how to market and direct their channel accordingly to produce more trending videos.
+
+## Live Dashboard
+
+See our dashboard live on shinyapps.io [here](https://lzung.shinyapps.io/youtube-trend-visualizer/)!
 
 ## Dashboard Features
 
@@ -45,10 +50,6 @@ Please click on the link below to access the sketch on Figma. More detailed mock
 [Figma Prototype](https://www.figma.com/proto/33iTnABTUz3DOoFkYiHiHU/Dashboard?node-id=1%3A2&scaling=scale-down&page-id=0%3A1&starting-point-node-id=1%3A2)
 
 ![Mockup](img/mockup.png)
-
-## Live Dashboard
-
-See our dashboard live on shinyapps.io [here](https://lzung.shinyapps.io/youtube-trend-visualizer/)!
 
 ## Dataset Used
 
