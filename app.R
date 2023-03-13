@@ -227,6 +227,11 @@ server <- function(input, output, session) {
   
   # Filter data by date universally
   data_by_date <- reactive({
+    # Catch if dates are set correctly
+    validate(
+      need(input$daterange[1] <= input$daterange[2], "End date must be after start date.")
+    )
+    
     data <- data |>
       dplyr::select(-title, -comments_disabled, -ratings_disabled) |>
       dplyr::filter(trending_date >= input$daterange[1] & trending_date <= input$daterange[2])
@@ -336,6 +341,8 @@ server <- function(input, output, session) {
     # Check if data exists for the filter
     validate(
       need(input$bubbleCats != "", "Please select a category."),
+    )
+    validate(
       need(data_by_date()$categoryId %in% input$bubbleCats, "Category is not present in subset. Select a different category.")
     )
     
