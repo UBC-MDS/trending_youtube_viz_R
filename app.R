@@ -14,6 +14,7 @@ library(sysfonts)
 library(packcircles)
 library(lubridate)
 library(rsconnect)
+library(shinytest2)
 
 options(shiny.autoreload = TRUE)
 options(max.print = 25)
