@@ -2,6 +2,7 @@ library(shiny)
 library(bslib)
 library(shinyWidgets)
 library(shinydashboard)
+library(shinycssloaders)
 library(ggplot2)
 library(forcats)
 library(plotly)
@@ -81,7 +82,9 @@ ui <- fluidPage(theme = light_theme,
           inputId = "daterange",
           label = span("Trending Date Range:", style = 'font-size: 20px'),
           start = min(data$trending_date),
-          end = max(data$trending_date),
+          end = "2020-08-19",
+          min = min(data$trending_date),
+          max = max(data$trending_date),
           format = "yyyy-mm-dd"
         ),
         shinydashboard::valueBoxOutput("video_count_box", width = "100%"),
@@ -121,7 +124,7 @@ ui <- fluidPage(theme = light_theme,
                   )
                 )
               ),
-              plotlyOutput(outputId = "boxplot")
+              shinycssloaders::withSpinner(plotlyOutput(outputId = "boxplot"), color="#D80808")
             )
           ),
           card(
@@ -136,7 +139,7 @@ ui <- fluidPage(theme = light_theme,
                 choices = unique(data$categoryId),
                 selected = "Music"
               ),
-              plotlyOutput(outputId = "barplot")
+              shinycssloaders::withSpinner(plotlyOutput(outputId = "barplot"), color="#D80808")
             )
           ),
           card(
@@ -168,7 +171,7 @@ ui <- fluidPage(theme = light_theme,
                   )
                 )
               ),
-              plotlyOutput('bubble')
+              shinycssloaders::withSpinner(plotlyOutput('bubble'), color="#D80808")
             )
           ),
           card(
@@ -195,7 +198,7 @@ ui <- fluidPage(theme = light_theme,
                        )
                 )
               ),
-              plotOutput('polar_coor', width = "100%")
+              shinycssloaders::withSpinner(plotOutput('polar_coor', width = "100%"), color="#D80808")
             )
           )
         )
@@ -207,7 +210,7 @@ ui <- fluidPage(theme = light_theme,
         hr(),
         column(4, p()),
         column(4, p()),
-        column(4, p()),
+        column(4, p())
       ),
       p("2023 © D. Cairns, N. Cho, L. Zung")
     )
@@ -226,8 +229,14 @@ server <- function(input, output, session) {
   
   # Filter data by date universally
   data_by_date <- reactive({
+    # Catch if dates are set correctly
+    validate(
+      need(input$daterange[1] <= input$daterange[2], "End date must be after start date.")
+    )
+    
     data <- data |>
-      dplyr::filter(trending_date > input$daterange[1] & trending_date < input$daterange[2])
+      dplyr::select(-title, -comments_disabled, -ratings_disabled) |>
+      dplyr::filter(trending_date >= input$daterange[1] & trending_date <= input$daterange[2])
     return(data)
   })
   
@@ -305,7 +314,7 @@ server <- function(input, output, session) {
       ) +
       ggplot2::labs(
         y = names(boxplot_options[which(boxplot_options == input$boxplotdist)]),
-        x = 'Category',
+        x = 'Category'
       ) +
       ggplot2::scale_y_continuous(labels = scales::label_number(scale_cut = cut_short_scale()), breaks = scales::breaks_pretty(n = 5)) +
       ggplot2::scale_fill_manual(values = boxplot_colours) + 
@@ -320,6 +329,11 @@ server <- function(input, output, session) {
 
   # Channel Barplot
   output$barplot <- plotly::renderPlotly({
+    # Check if data exists for the filter
+    validate(
+      need(input$barplotcat %in% data_by_date()$categoryId, "Category is not present in subset. Select a different category.")
+    )
+    
     # Create plot
     bar_plot <- data_by_date() |>
       dplyr::filter(categoryId == input$barplotcat) |>
@@ -346,6 +360,7 @@ server <- function(input, output, session) {
       ggplot2::scale_y_discrete(labels = function(x) {
         stringr::str_wrap(x, width = 20)
       }) +
+      ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
       ggplot2::theme(axis.title.x = element_text(size = 14, face = "bold"),
                      axis.title.y = element_text(size = 14, face = "bold"))
       
@@ -356,6 +371,14 @@ server <- function(input, output, session) {
   
   # Bubble Tags Plot
   output$bubble <- plotly::renderPlotly({
+    # Check if data exists for the filter
+    validate(
+      need(input$bubbleCats != "", "Please select a category."),
+    )
+    validate(
+      need(data_by_date()$categoryId %in% input$bubbleCats, "Category is not present in subset. Select a different category.")
+    )
+    
     filtered_tag_counts <- data_by_date() |>
       # Filter date and categories
       dplyr::filter(categoryId %in% input$bubbleCats) |>
@@ -398,6 +421,11 @@ server <- function(input, output, session) {
   # There is currently an open issue regarding the integration of coord_polar in plotly
   # (https://github.com/plotly/plotly.R/issues/878)
   output$polar_coor <- renderPlot({
+    # Check if data exists for the filter
+    validate(
+      need(input$vid_category %in% data_by_date()$categoryId, "Category is not present in subset. Select a different category.")
+    )
+    
     data_filtered <- data_by_date() |>
       # Filtering dataset by category
       dplyr::filter(categoryId == input$vid_category) |>
