@@ -14,6 +14,7 @@ library(sysfonts)
 library(packcircles)
 library(lubridate)
 library(rsconnect)
+library(rmarkdown)
 
 options(shiny.autoreload = TRUE)
 options(max.print = 25)
@@ -91,6 +92,7 @@ ui <- fluidPage(theme = light_theme,
           value = FALSE,
           status = "info"
         ),
+        downloadButton("report", "Generate report"),
       ),
       mainPanel(
         width = 10,
@@ -244,6 +246,37 @@ server <- function(input, output, session) {
       subtitle = "Total Channel Count"
     )
   })
+  
+  # Download report
+  output$report <- downloadHandler(
+    filename = "report.html",
+    content = function(file) {
+      tempReport <- file.path(tempdir(), "report.Rmd")
+      file.copy("report.Rmd", tempReport, overwrite = TRUE)
+      
+      params <- list(daterange = input$daterange,
+                     rm_outliers = input$rm_outliers,
+                     boxplotdist = input$boxplotdist,
+                     barplotcat = input$barplotcat,
+                     bubbleCats = input$bubbleCats,
+                     num_tags = input$num_tags,
+                     vid_category = input$vid_category,
+                     representation_format = input$representation_format)
+                    
+      id <- showNotification(
+        "Rendering report...", 
+        duration = NULL, 
+        closeButton = FALSE
+      )
+      on.exit(removeNotification(id), add = TRUE)
+      
+      rmarkdown::render("report.Rmd", 
+                        output_file = file,
+                        params = params,
+                        envir = new.env(parent = globalenv())
+      )
+    }
+  )
   
   # Filter out outliers if toggled
   boxplot_data <- reactive({
