@@ -15,6 +15,7 @@ library(sysfonts)
 library(packcircles)
 library(lubridate)
 library(rsconnect)
+library(shinytest2)
 library(rmarkdown)
 
 options(shiny.autoreload = TRUE)
