@@ -15,4 +15,4 @@ Adding in the hover functionality was a later thought and has added great functi
 **Any items that your app lacks?**
 
 -   As mentioned by a TA, the app loads slowly when rendered via shinyapps.io. We changed the amount of data that gets initially loaded so that startup is slightly improved. As the app loads quickly when loaded locally, we concluded that the lag time in rendering is most likely due to a slow server issue on Shinyapps' end
--   Our bubble chart could benefit from having a legend that describes clearly the meaning behind the colour and sizing of the individual bubbles. At this stage, we were unable to implement this but this is definitely an area of further improvement
+-   Our bubble chart could benefit from having a legend that describes clearly the meaning behind the sizing of the individual bubbles. At this stage, we were unable to implement this but this is definitely an area of further improvement
