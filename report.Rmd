@@ -8,9 +8,8 @@ output:
     sysfonts::font_add_google("Assistant")
     thematic_shiny(font = "auto")
     showtext::showtext_auto()
-
 params:
-  !r daterange: NA
+  daterange: NA
   rm_outliers: NA
   boxplotdist: NA
   barplotcat: NA
@@ -19,8 +18,8 @@ params:
   vid_category: NA
   representation_format: NA
 ---
-
-```{r}
+  
+```{r setup, include=FALSE}
 # Loading in the data
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
@@ -46,7 +45,7 @@ data <- read.csv("data/processed/CA_youtube_trending_data_processed.csv")
 
 # Filter data by date universally
 data_by_date <- data |>
-      dplyr::filter(trending_date > params$daterange[1] & trending_date < params$daterange[2])
+  dplyr::filter(trending_date > params$daterange[1] & trending_date < params$daterange[2])
 
 # Filter out outliers if toggled
 if (params$rm_outliers == TRUE) {
@@ -90,9 +89,10 @@ boxplot_colours <- setNames(
 # Video Counter
 video_count_box <-
   shinydashboard::valueBox(
-      span(icon("video"), length(unique(data_by_date$video_id))),
-      subtitle = "Total Video Count"
-    )
+    span(icon("video"), length(unique(data_by_date$video_id))),
+    subtitle = "Total Video Count"
+  )
+# video_count_box
 
 # Channel Counter
 channel_count_box <- shinydashboard::valueBox(span(icon("user"), length(unique(
@@ -100,38 +100,57 @@ channel_count_box <- shinydashboard::valueBox(span(icon("user"), length(unique(
 ))),
 subtitle = "Total Channel Count")
 
+# channel_count_box
+
 ```
 
+## Distribution Boxplots
+
+**Use your cursor to select an area to zoom or hover to gain additional information**
+
+```{r}
+paste("Exclude Outliers (>0.9 Quantile):", params$rm_outliers)
+paste("Distribution Metric:", params$boxplotdist)
+```
+  
 ```{r}
 # Category Boxplot
 box_plot <- boxplot_data |>
-      dplyr::arrange(trending_date) |>
-      dplyr::distinct(video_id, .keep_all = TRUE) |> # keep most recent data point for accurate tracking (no aggregating the same video)
-      ggplot2::ggplot() +
-      ggplot2::geom_boxplot(
-        aes(
-          x = forcats::fct_reorder(categoryId, !!rlang::sym(params$boxplotdist)),
-          y = !!rlang::sym(params$boxplotdist),
-          fill = categoryId
-        )
-      ) +
-      ggplot2::labs(
-        y = names(boxplot_options[which(boxplot_options == params$boxplotdist)]),
-        x = 'Category',
-      ) +
-      ggplot2::scale_y_continuous(labels = scales::label_number(scale_cut = cut_short_scale()), breaks = scales::breaks_pretty(n = 5)) +
-      ggplot2::scale_fill_manual(values = boxplot_colours) +
-      ggplot2::guides(fill = FALSE) +
-      ggplot2::theme(axis.title.x = element_text(size = 14, face = "bold"),
-                     axis.title.y = element_text(size = 14, face = "bold")) +
-      ggplot2::coord_flip()
+  dplyr::arrange(trending_date) |>
+  dplyr::distinct(video_id, .keep_all = TRUE) |> # keep most recent data point for accurate tracking (no aggregating the same video)
+  ggplot2::ggplot() +
+  ggplot2::geom_boxplot(
+    aes(
+      x = forcats::fct_reorder(categoryId, !!rlang::sym(params$boxplotdist)),
+      y = !!rlang::sym(params$boxplotdist),
+      fill = categoryId
+    )
+  ) +
+  ggplot2::labs(
+    y = names(boxplot_options[which(boxplot_options == params$boxplotdist)]),
+    x = 'Category',
+  ) +
+  ggplot2::scale_y_continuous(labels = scales::label_number(scale_cut = cut_short_scale()), breaks = scales::breaks_pretty(n = 5)) +
+  ggplot2::scale_fill_manual(values = boxplot_colours) +
+  ggplot2::guides(fill = FALSE) +
+  ggplot2::theme(axis.title.x = element_text(size = 14, face = "bold"),
+                 axis.title.y = element_text(size = 14, face = "bold")) +
+  ggplot2::coord_flip()
 
-    # Display the plot
-    plotly::ggplotly(box_plot, tooltip = "text")
+# Display the plot
+plotly::ggplotly(box_plot, tooltip = "text")
 
-```  
+```
 
-```{r}    
+## Trending Videos by Channel
+
+**Hover your cursor over the graph to gain additional information**
+
+```{r}
+paste("Category:", params$barplotcat)
+```
+  
+```{r}
 # Channel Barplot
 bar_plot <- data_by_date |>
   dplyr::filter(categoryId == params$barplotcat) |>
@@ -163,7 +182,14 @@ bar_plot <- data_by_date |>
 # Display the plot
 plotly::ggplotly(bar_plot, tooltip = "text")
 
+```
 
+## Common Tags by Category
+
+**Hover your cursor over the graph to gain additional information**
+
+```{r}
+paste("Number of Tags:", params$num_tags)
 ```
 
 ```{r}
@@ -218,6 +244,13 @@ bubble_plot <-
 # Display the plot
 plotly::ggplotly(bubble_plot, tooltip = "text")
 
+```
+
+## Popular Publishing Times
+
+```{r}
+paste("Representation Format:", params$representation_format)
+paste("Category:", params$vid_category)
 ```
 
 ```{r}
