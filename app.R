@@ -168,7 +168,7 @@ ui <- fluidPage(theme = light_theme,
                   sliderInput(
                     inputId = "num_tags",
                     label = "Number of Tags:",
-                    min = 1, max = 50, value = 30
+                    min = 12, max = 36, value = 24
                   )
                 )
               ),
@@ -394,20 +394,22 @@ server <- function(input, output, session) {
       subset(tag != "[none]")
     
     # Functions to "pack" the circles in a nice layout
-    packing <- packcircles::circleProgressiveLayout(filtered_tag_counts$Freq[1:input$num_tags])
-    packing$radius <- 0.95*packing$radius
+    packing <- packcircles::circleProgressiveLayout(filtered_tag_counts$Freq[1:input$num_tags]) |>
+      mutate(radius = 0.95* radius,
+             id = dplyr::row_number())
     packing$counts <- filtered_tag_counts$Freq[1:input$num_tags]
-    bubbleplot_data <- packcircles::circleLayoutVertices(packing)
+    bubbleplot_data <- packcircles::circleLayoutVertices(packing) |>
+      merge(y = select(packing, id, radius, counts), by = "id")
     bubble_labels <- stringr::str_wrap(filtered_tag_counts$tag[1:input$num_tags], 10)
     
     # Create the plot
     bubble_plot <- ggplot2::ggplot(bubbleplot_data, aes(x, y, text = paste("Rank: ", id))) + 
-      ggplot2::geom_polygon(aes(group = id, fill = id), 
-                            colour = "black", show.legend = FALSE) +
+      ggplot2::geom_polygon(aes(group = id, fill = counts), 
+                            colour = "black", show.legend = TRUE) +
       ggplot2::geom_text(data = packing,
                          aes(x, y, text = paste("Tag: ", filtered_tag_counts$tag[1:input$num_tags], "\nNumber of Videos: ", counts)),
                          label = bubble_labels, size = 3, color = "white") +
-      ggplot2::scale_fill_viridis_c() +
+      ggplot2::scale_fill_gradient(name = "Num. of\nVideos", high = "#FF0000", low = "#440000") +
       ggplot2::theme(
         axis.title = element_blank(),
         axis.text = element_blank(),
