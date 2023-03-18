@@ -48,7 +48,7 @@ test_that("{shinytest2} recording: error_handling", {
   app$set_inputs(daterange = c("2020-08-12", "2020-08-13"))
   app$set_inputs(barplotcat = "Nonprofits & Activism")
   app$set_inputs(bubbleCats = character(0))
-  app$expect_screenshot()
+  app$expect_screenshot(delay = 10)
   app$set_inputs(bubbleCats = "Nonprofits & Activism")
   app$set_inputs(vid_category = "Nonprofits & Activism")
   app$expect_screenshot(delay = 10)
