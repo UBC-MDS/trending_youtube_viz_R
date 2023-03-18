@@ -51,5 +51,5 @@ test_that("{shinytest2} recording: error_handling", {
   app$expect_screenshot(delay = 10)
   app$set_inputs(bubbleCats = "Nonprofits & Activism")
   app$set_inputs(vid_category = "Nonprofits & Activism")
-  app$expect_screenshot(delay = 10)
+  app$expect_screenshot(delay = 20)
 })
