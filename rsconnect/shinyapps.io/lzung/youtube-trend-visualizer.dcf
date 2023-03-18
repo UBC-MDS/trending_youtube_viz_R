@@ -5,9 +5,9 @@ account: lzung
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 8466123
-bundleId: 6916438
+bundleId: 6975026
 url: https://lzung.shinyapps.io/youtube-trend-visualizer/
-when: 1677972752.15372
-lastSyncTime: 1677972752.15373
+when: 1679132463.11722
+lastSyncTime: 1679132463.11727
 asMultiple: FALSE
 asStatic: FALSE

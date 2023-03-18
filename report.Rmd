@@ -220,9 +220,9 @@ bubble_labels <-
 # Create the plot
 bubble_plot <-
   ggplot2::ggplot(bubbleplot_data, aes(x, y, text = paste("Rank: ", id))) +
-  ggplot2::geom_polygon(aes(group = id, fill = id),
+  ggplot2::geom_polygon(aes(group = id, fill = counts),
                         colour = "black",
-                        show.legend = FALSE) +
+                        show.legend = TRUE) +
   ggplot2::geom_text(
     data = packing,
     aes(
@@ -234,7 +234,7 @@ bubble_plot <-
     size = 3,
     color = "white"
   ) +
-  ggplot2::scale_fill_viridis_c() +
+  ggplot2::scale_fill_gradient(name = "Num. of\nVideos", high = "#FF0000", low = "#440000") +
   ggplot2::theme(
     axis.title = element_blank(),
     axis.text = element_blank(),
