@@ -1,3 +1,5 @@
+[![shiny-deploy](https://github.com/UBC-MDS/trending_youtube_viz_r/actions/workflows/deploy-app.yaml/badge.svg)](https://github.com/UBC-MDS/trending_youtube_viz_r/actions/workflows/deploy-app.yaml) [![Testing workflow](https://github.com/UBC-MDS/trending_youtube_viz_r/actions/workflows/testing.yaml/badge.svg)](https://github.com/UBC-MDS/trending_youtube_viz_r/actions/workflows/testing.yaml)
+
 # 📹 Youtube Trend Analytics
 ![GIF](img/shiny_dashboard.gif)
 
