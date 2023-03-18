@@ -210,12 +210,13 @@ bubble <-
 
 # Functions to "pack" the circles in a nice layout
 packing <-
-  packcircles::circleProgressiveLayout(filtered_tag_counts$Freq[1:params$num_tags])
-packing$radius <- 0.95 * packing$radius
+  packcircles::circleProgressiveLayout(filtered_tag_counts$Freq[1:params$num_tags]) |>
+  mutate(radius = 0.95 * radius,
+         id = dplyr::row_number())
 packing$counts <- filtered_tag_counts$Freq[1:params$num_tags]
-bubbleplot_data <- packcircles::circleLayoutVertices(packing)
-bubble_labels <-
-  stringr::str_wrap(filtered_tag_counts$tag[1:params$num_tags], 10)
+bubbleplot_data <- packcircles::circleLayoutVertices(packing) |>
+  merge(y = select(packing, id, radius, counts), by = "id")
+bubble_labels <- stringr::str_wrap(filtered_tag_counts$tag[1:params$num_tags], 10)
 
 # Create the plot
 bubble_plot <-
